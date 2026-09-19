@@ -41,7 +41,7 @@ export function SnippetCard({
     }
   };
 
-  const badgeStyle = CATEGORY_COLORS[snippet.category] || CATEGORY_COLORS.Utility;
+  const badgeStyle = CATEGORY_COLORS[snippet.category] || 'bg-violet-500/10 text-violet-400 border-violet-500/20';
 
   return (
     <div className="group relative flex flex-col justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-5 backdrop-blur-xl transition-all duration-200 hover:border-indigo-500/40 hover:bg-zinc-900/90 hover:shadow-xl hover:shadow-indigo-500/5">

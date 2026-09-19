@@ -1,4 +1,16 @@
-export type SnippetCategory = 'React' | 'TypeScript' | 'CSS' | 'Backend' | 'DevOps' | 'Database' | 'Utility';
+export const PREDEFINED_CATEGORIES = [
+  'React',
+  'TypeScript',
+  'CSS',
+  'Backend',
+  'DevOps',
+  'Database',
+  'Utility'
+] as const;
+
+export type PredefinedCategory = typeof PREDEFINED_CATEGORIES[number];
+
+export type SnippetCategory = PredefinedCategory | string;
 
 export interface Snippet {
   id: string;
@@ -12,4 +24,5 @@ export interface Snippet {
   createdAt: string;
 }
 
-export type FilterCategory = 'All' | SnippetCategory | 'Favorites';
+export type FilterCategory = 'All' | 'Favorites' | SnippetCategory;
+

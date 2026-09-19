@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Code2, Sparkles } from 'lucide-react';
-import { Snippet, SnippetCategory } from '../types/snippet';
+import { Snippet, PREDEFINED_CATEGORIES } from '../types/snippet';
 
 interface SnippetModalProps {
   isOpen: boolean;
@@ -10,16 +10,6 @@ interface SnippetModalProps {
   onSave: (snippet: Omit<Snippet, 'id' | 'createdAt'> & { id?: string }) => void;
   editingSnippet?: Snippet | null;
 }
-
-const CATEGORIES: SnippetCategory[] = [
-  'React',
-  'TypeScript',
-  'CSS',
-  'Backend',
-  'DevOps',
-  'Database',
-  'Utility'
-];
 
 export function SnippetModal({
   isOpen,
@@ -31,7 +21,8 @@ export function SnippetModal({
   const [description, setDescription] = useState('');
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('typescript');
-  const [category, setCategory] = useState<SnippetCategory>('React');
+  const [categorySelect, setCategorySelect] = useState<string>('React');
+  const [customCategory, setCustomCategory] = useState('');
   const [tagsInput, setTagsInput] = useState('');
 
   useEffect(() => {
@@ -40,14 +31,23 @@ export function SnippetModal({
       setDescription(editingSnippet.description);
       setCode(editingSnippet.code);
       setLanguage(editingSnippet.language);
-      setCategory(editingSnippet.category);
       setTagsInput(editingSnippet.tags.join(', '));
+
+      const isPredefined = (PREDEFINED_CATEGORIES as readonly string[]).includes(editingSnippet.category);
+      if (isPredefined) {
+        setCategorySelect(editingSnippet.category);
+        setCustomCategory('');
+      } else {
+        setCategorySelect('Custom');
+        setCustomCategory(editingSnippet.category);
+      }
     } else {
       setTitle('');
       setDescription('');
       setCode('');
       setLanguage('typescript');
-      setCategory('React');
+      setCategorySelect('React');
+      setCustomCategory('');
       setTagsInput('');
     }
   }, [editingSnippet, isOpen]);
@@ -63,19 +63,25 @@ export function SnippetModal({
       .map((t) => t.trim().toLowerCase())
       .filter((t) => t.length > 0);
 
+    const finalCategory =
+      categorySelect === 'Custom'
+        ? customCategory.trim() || 'Custom'
+        : categorySelect;
+
     onSave({
       id: editingSnippet?.id,
       title: title.trim(),
       description: description.trim(),
       code: code.trim(),
       language: language.toLowerCase().trim(),
-      category,
+      category: finalCategory,
       tags,
       isFavorite: editingSnippet ? editingSnippet.isFavorite : false
     });
 
     onClose();
   };
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm animate-in fade-in duration-200">
@@ -119,16 +125,27 @@ export function SnippetModal({
             <div>
               <label className="block text-xs font-medium text-zinc-300">Category</label>
               <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value as SnippetCategory)}
+                value={categorySelect}
+                onChange={(e) => setCategorySelect(e.target.value)}
                 className="mt-1 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3.5 py-2 text-sm text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               >
-                {CATEGORIES.map((cat) => (
+                {PREDEFINED_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
                   </option>
                 ))}
+                <option value="Custom">Custom</option>
               </select>
+              {categorySelect === 'Custom' && (
+                <input
+                  type="text"
+                  required
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                  placeholder="Enter custom category name..."
+                  className="mt-2 w-full rounded-xl border border-indigo-500/50 bg-zinc-950 px-3.5 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              )}
             </div>
 
             <div>

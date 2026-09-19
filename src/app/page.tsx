@@ -6,7 +6,7 @@ import { StatsOverview } from '../components/StatsOverview';
 import { SnippetCard } from '../components/SnippetCard';
 import { SnippetModal } from '../components/SnippetModal';
 import { INITIAL_SNIPPETS } from '../lib/initialData';
-import { Snippet, FilterCategory } from '../types/snippet';
+import { Snippet, FilterCategory, PREDEFINED_CATEGORIES } from '../types/snippet';
 import { Code2, FilterX, GitBranch, Terminal } from 'lucide-react';
 
 export default function Home() {
@@ -38,6 +38,15 @@ export default function Home() {
       localStorage.setItem('devpulse_snippets', JSON.stringify(snippets));
     }
   }, [snippets, isInitialized]);
+
+  const categories = useMemo(() => {
+    const customCategories = Array.from(
+      new Set(snippets.map((s) => s.category))
+    ).filter((c) => !(PREDEFINED_CATEGORIES as readonly string[]).includes(c));
+
+    return ['All', 'Favorites', ...PREDEFINED_CATEGORIES, ...customCategories];
+  }, [snippets]);
+
 
   const filteredSnippets = useMemo(() => {
     return snippets.filter((s) => {
@@ -128,6 +137,7 @@ export default function Home() {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
         onOpenCreateModal={handleOpenCreate}
+        categories={categories}
       />
 
       <main className="mx-auto flex-1 w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">

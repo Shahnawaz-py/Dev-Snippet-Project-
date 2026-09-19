@@ -10,26 +10,16 @@ interface NavbarProps {
   selectedCategory: FilterCategory;
   setSelectedCategory: (cat: FilterCategory) => void;
   onOpenCreateModal: () => void;
+  categories: FilterCategory[];
 }
-
-const CATEGORIES: FilterCategory[] = [
-  'All',
-  'Favorites',
-  'React',
-  'TypeScript',
-  'CSS',
-  'Backend',
-  'DevOps',
-  'Database',
-  'Utility'
-];
 
 export function Navbar({
   searchQuery,
   setSearchQuery,
   selectedCategory,
   setSelectedCategory,
-  onOpenCreateModal
+  onOpenCreateModal,
+  categories
 }: NavbarProps) {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-xl">
@@ -46,7 +36,7 @@ export function Navbar({
                   v1.0
                 </span>
               </div>
-              <p className="text-xs text-zinc-400">Developer Code Snippet & Notes Vault</p>
+              <p className="text-xs text-zinc-400">Developer Code Snippet &amp; Notes Vault</p>
             </div>
           </div>
 
@@ -73,7 +63,7 @@ export function Navbar({
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
-          {CATEGORIES.map((category) => {
+          {categories.map((category) => {
             const isActive = selectedCategory === category;
             return (
               <button
